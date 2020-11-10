@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<!--<script src="script.js"></script>-->
+<link href="css/style.css" type="text/css"/ rel="stylesheet">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="js/script.js"></script>
+<title>7amo2a's Game</title>
+<link rel="shortcut icon" type="image/x-icon" href="images/7amo2a.ico" />
+
+</head>
+<body onload="start();">
+
+  <audio id="myAudio">
+    <source src="rings/pl.wav" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  <audio id="myAudioEnd">
+    <source src="rings/ayama.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  <audio id="myAudioError">
+    <source src="rings/chicken.wav" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+  <br><br><br>
+<h1> Welcome in 7amo2a's Game !!</h1>
+<br><br><br>
+<div class="ui-widget-content" id="divvv">
+<div id='msg'>msg here</div>
+<br><br><br>
+<span id="moveMe">Drag Me</span>
+<table id="tbl" >
+    <tr>
+        <td id="cell1" class="cell" onclick="Play(this);"></td>
+        <td id="cell2" class="cell" onclick="Play(this);"></td>
+        <td id="cell3" class="cell" onclick="Play(this);"></td>
+    </tr>
+    <tr>
+      <td  id="cell4" class="cell" onclick="Play(this);"></td>
+      <td  id="cell5" class="cell"onclick="Play(this);"></td>
+      <td  id="cell6" class="cell" onclick="Play(this);"></td>
+    </tr>
+    <tr>
+      <td  id="cell7" class="cell"onclick="Play(this);"></td>
+      <td  id="cell8" class="cell" onclick="Play(this);"></td>
+      <td  id="cell9" class="cell" onclick="Play(this);"></td>
+    </tr>
+
+
+</table>
+
+
+<button onclick="start()">New Game</button>
+
+</div>
+
+<script>
+var p = document.getElementById("myAudio");
+var e =document.getElementById("myAudioEnd");
+var r =document.getElementById("myAudioError");
+
+
+
+        var X ="X";  // global variable
+        var count = 0; //counting how many cells are full
+        var winner = null; // stop complete the game after win
+
+
+         /*var cell_1 = decument.getElementById('cell1').innerHTML;
+         var cell_2 = decument.getElementById('cell2').innerHTML;
+         var cell_3 = decument.getElementById('cell3').innerHTML;
+         var cell_4 = decument.getElementById('cell4').innerHTML;
+         var cell_5 = decument.getElementById('cell5').innerHTML;
+         var cell_6 = decument.getElementById('cell6').innerHTML;
+         var cell_7 = decument.getElementById('cell7').innerHTML;
+         var cell_8 = decument.getElementById('cell8').innerHTML;
+         var cell_9 = decument.getElementById('cell9').innerHTML;*/
+
+
+
+
+
+        //start game when load
+
+        function start()
+        {
+          
+            stopdAudio();
+            count = 0;
+            for(var i =1;i<10;i++)
+            {
+            clearCell(i);
+            }
+            if(Math.random()>0.4)
+            window.X='O';
+            setMessage(window.X+' is the first to play');
+
+
+
+        }
+            //message
+        function setMessage(msg){ document.getElementById('msg').innerHTML = msg;}
+
+         //the first player
+        function Play(cel)
+        {
+        if (window.winner!=null)
+            setMessage(window.winner+" is the winner <br> start new game");
+
+         else if(cel.innerHTML=='')
+         {
+         cel.innerHTML= window.X;
+         playAudio();
+         nextPlay();
+         count++; 
+         //None win
+         if(!checkWinner(window.X) && count == 9) //To check the Draw only when whole cells are full(9 cells)
+         {
+           
+           setMessage('Draw <br> ( No winner )');
+           errdAudio();
+           
+         }
+        
+        }
+        else{
+         setMessage('OPS choose another Square to play');
+        }
+          
+        }
+        // the next palyer
+        function nextPlay()
+        {
+          
+        
+           if(checkWinner(window.X))
+           {
+             setMessage(window.X+'<br>'+'Winner !' );
+             window.winner =window.X; //can't complete after win
+
+            endAudio();
+
+           }
+           
+          else if(window.X=='X')
+          {
+              window.X='O';
+              setMessage(window.X+' '+'must  play');
+
+          }
+          else
+              {
+                window.X='X';
+                setMessage(window.X+' '+'must  play');
+
+              }           
+        }
+
+   //check for winner
+        function checkWinner(move)
+        {
+        var result =false;
+        if(
+          checkRow(1,2,3,move)||
+          checkRow(4,5,6,move)||
+          checkRow(7,8,9,move)||
+          checkRow(1,4,7,move)||
+          checkRow(2,5,8,move)||
+          checkRow(3,6,9,move)||
+          checkRow(1,5,9,move)||
+          checkRow(3,5,7,move)
+         )
+
+          
+         {
+          result=true;}
+         return result;
+
+        }
+
+        //check row
+        function checkRow(c1,c2,c3,move)
+        {
+         var chk =false;
+         if(getCell(c1) == move && getCell(c2) == move && getCell(c3) == move)
+          {
+            chk= true;
+            document.getElementById("cell"+c1).style.backgroundColor="#009788";
+             document.getElementById("cell"+c2).style.backgroundColor="#009788";
+             document.getElementById("cell"+c3).style.backgroundColor="#009788";
+          }
+          return chk;
+        }
+
+  //returm  cell containt
+        function getCell(num)
+        {
+           return document.getElementById("cell"+num).innerHTML;
+        }
+        //lear cell after win
+        function clearCell(num)
+        {
+          document.getElementById("cell"+num).innerHTML="";
+          document.getElementById("cell"+num).style.backgroundColor='#ecf2f9';
+          window.winner=null
+
+        }
+
+
+
+function playAudio() {
+    p.play();
+}
+function endAudio() {
+    e.play();
+}
+
+function errdAudio() {
+    r.play();
+}
+function stopdAudio() {
+    e.pause();
+    e.currentTime = 0;
+}
+
+
+</script>
+
+</body>
+</html>
